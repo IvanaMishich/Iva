@@ -1,0 +1,158 @@
+from random import *
+global word_list
+word_list = ['способ', 'завод', 'цвет', 'журнал', 'руководитель', 'специалист', 'оценка', 'регион', 'песня', 'процент', 'родитель', 'море', 'требование', 'основание', 'половина', 'роман', 'круг', 'анализ', 'стихи', 'автомобиль']
+def get_word():
+    word = choice(word_list).upper()
+    return word
+def risunok(tries):
+    stages = ['''
+                _______
+               |       |
+               |       O
+               |      \\|/
+               |       |
+               |       /\\
+               _ ''', 
+               '''
+                _______
+               |       |
+               |       O
+               |      \\|/
+               |       |
+               |      /
+               _ ''', 
+               '''
+                _______
+               |       |
+               |       O
+               |      \\|/
+               |       |
+               |      
+               _ ''', 
+               '''
+                _______
+               |       |
+               |       O
+               |      \\|
+               |       |
+               |      
+               _ ''', 
+               '''
+                _______
+               |       |
+               |       O
+               |       |
+               |       |
+               |      
+               _''', 
+               '''
+                _______
+               |       |
+               |       O
+               |       
+               |       
+               |      
+               _''', 
+               '''
+                _______
+               |       |
+               |       
+               |     
+               |       
+               |      
+               _''']
+    return stages[tries]
+def zashita(n):
+    while not n.isalpha():
+        n = input('Введи букву или слово!')
+    return n
+def zanovo():
+    otv = input('Сыграем еще раз? да/нет:')
+    while otv.upper() != 'ДА' and otv.upper() != 'НЕТ':
+        otv = input('Некорректный ответ, введи да или нет:')
+    if otv.upper() == 'ДА':
+        tries = 6
+        print(risunok(tries))
+        print('Напиши букву:')
+        return 'ДА'
+    else:
+        return 'НЕТ'
+flag = False
+tries = 6
+uzhe_bilo = []
+word = get_word()
+simvol = list('_' * len(word))
+print('Давайте играть в угадайку слов!')
+print(risunok(tries))
+print(*simvol)
+print('Введи букву:')
+while flag == False:
+    vvod = input().upper()
+    vvod = zashita(vvod)
+    while vvod in uzhe_bilo:
+        vvod = input('Эта буква уже была, назови другую:')
+    uzhe_bilo.append(vvod)
+    if len(vvod) == 1:
+        poisk = word.find(vvod)
+        if poisk == -1:
+            tries -= 1
+            print('Такой буквы нет в слове! Осталось попыток:', tries)
+            print(risunok(tries))
+            print(*simvol)
+        else:
+            spisok_indeksov = []
+            cop = word
+            while poisk != -1:
+                spisok_indeksov.append(poisk)
+                cop = cop.replace(vvod, '-', 1)
+                poisk = cop.find(vvod)
+            for i in spisok_indeksov:
+                simvol.pop(i)
+                simvol.insert(i, vvod)
+            print('Верно! Теперь строка выглядит так:') 
+            print(risunok(tries))
+            print(*simvol)
+            if '_' in simvol:
+                print('Введи слово если угадал его, иначе введи букву:')
+            else:
+                print('Молодец, слово отгадано!!!')
+                print(word)
+                if zanovo() == 'ДА':
+                    tries = 6
+                    word = get_word()
+                    simvol = list('_' * len(word))
+                    uzhe_bilo = []
+                    flag = False
+                else:
+                    flag = True
+    else:
+        poisk = word.find(vvod)
+        if poisk == -1:
+            tries -= 1
+            print('Неверное слово! Осталось попыток:', tries)
+            print(risunok(tries))
+            print(*simvol)
+        else:
+            print('Молодец, слово отгадано!!!')
+            print(word)
+            if zanovo() == 'ДА':
+                tries = 6
+                word = get_word()
+                simvol = list('_' * len(word))
+                uzhe_bilo = []
+                flag = False
+            else:
+                flag = True
+    if tries == 0:
+        print(risunok(tries))
+        print('К сожалению слово не отгадано! Конец игры')
+        print(word)
+        if zanovo() == 'ДА':
+            tries = 6
+            word = get_word()
+            simvol = list('_' * len(word))
+            uzhe_bilo = []
+            flag = False
+        else:
+            flag = True
+print('Спасибо что играли в Угадайку слов! До встречи :)')
